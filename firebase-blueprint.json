@@ -1,0 +1,137 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with productivity stats and plan tier.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "plan": { "type": "string", "enum": ["free", "pro", "premium"] },
+        "pScore": { "type": "number", "description": "Productivity Score" },
+        "notifications": {
+          "type": "object",
+          "properties": {
+            "taskReminders": { "type": "boolean" },
+            "aiInsights": { "type": "boolean" }
+          }
+        },
+        "paymentMethod": {
+          "type": "object",
+          "properties": {
+            "last4": { "type": "string" },
+            "brand": { "type": "string" },
+            "expiry": { "type": "string" }
+          }
+        },
+        "bankAccount": {
+          "type": "object",
+          "properties": {
+            "last4": { "type": "string" },
+            "routing": { "type": "string" }
+          }
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "plan"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "System or AI generated notification.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "type": { "type": "string", "enum": ["task", "insight", "billing", "system"] },
+        "read": { "type": "boolean" },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "content", "userId", "read"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "A productivity task in the user's workflow.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "priority": { "type": "string", "enum": ["low", "medium", "high"] },
+        "completed": { "type": "boolean" },
+        "userId": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "reminderSent": { "type": "boolean" },
+        "isAiGenerated": { "type": "boolean" },
+        "time": { "type": "string", "description": "Display time like '9:00 AM'" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "userId", "completed"]
+    },
+    "Insight": {
+      "title": "Insight",
+      "description": "AI-generated productivity insight.",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "type": { "type": "string", "enum": ["strategy", "focus", "rest", "motivation"] },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["content", "userId"]
+    },
+    "Habit": {
+      "title": "Habit",
+      "description": "A daily or weekly consistent activity.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "userId": { "type": "string" },
+        "streak": { "type": "number" },
+        "lastCompleted": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "userId", "streak"]
+    },
+    "Goal": {
+      "title": "Goal",
+      "description": "Long-term architecture roadmap goal.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "userId": { "type": "string" },
+        "targetDate": { "type": "string", "format": "date-time" },
+        "progress": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "userId"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles by UID."
+    },
+    "tasks/{taskId}": {
+      "schema": "Task",
+      "description": "Collection of tasks."
+    },
+    "insights/{insightId}": {
+      "schema": "Insight",
+      "description": "Collection of AI insights."
+    },
+    "notifications/{notifId}": {
+      "schema": "Notification",
+      "description": "System and neural notifications."
+    },
+    "habits/{habitId}": {
+      "schema": "Habit",
+      "description": "Daily habit tracking metrics."
+    },
+    "goals/{goalId}": {
+      "schema": "Goal",
+      "description": "Multi-phase architecture roadmaps."
+    }
+  }
+}

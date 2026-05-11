@@ -1,0 +1,100 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Users ---
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(incoming());
+      allow update: if isOwner(userId) && isValidUser(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'email', 'plan', 'pScore', 'notifications', 'paymentMethod', 'bankAccount', 'updatedAt', 'userId', 'createdAt'])
+      );
+
+      function isValidUser(data) {
+        return data.name is string && data.name.size() <= 100 &&
+               data.email is string && data.email.size() <= 100 &&
+               data.plan in ['free', 'pro', 'premium', 'premium-plus'];
+      }
+    }
+
+    // --- Tasks ---
+    match /tasks/{taskId} {
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid && isValidTask(incoming());
+      allow update: if isSignedIn() && 
+                    existing().userId == request.auth.uid && 
+                    incoming().userId == request.auth.uid && 
+                    isValidTask(incoming()) && (
+                      incoming().diff(existing()).affectedKeys().hasAny(['completed', 'title', 'description', 'priority', 'updatedAt', 'reminderSent', 'dueDate'])
+                    );
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+
+      function isValidTask(data) {
+        return data.title is string && data.title.size() <= 200 &&
+               data.userId == request.auth.uid &&
+               data.priority in ['low', 'medium', 'high'] &&
+               data.completed is bool &&
+               (!('dueDate' in data) || data.dueDate is string) &&
+               (!('reminderSent' in data) || data.reminderSent is bool) &&
+               (!('isAiGenerated' in data) || data.isAiGenerated is bool);
+      }
+    }
+
+    // --- Insights ---
+    match /insights/{insightId} {
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid;
+    }
+
+    // --- Notifications ---
+    match /notifications/{notifId} {
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid && 
+                    incoming().diff(existing()).affectedKeys().hasOnly(['read']);
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid;
+    }
+
+    // --- Habits ---
+    match /habits/{habitId} {
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // --- Goals ---
+    match /goals/{goalId} {
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid;
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

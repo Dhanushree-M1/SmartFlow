@@ -1,18 +1,20 @@
-# SmartFlow
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+</div>
 
-> **The productivity operating system for ambitious minds.**
+# Run and deploy your AI Studio app
 
-SmartFlow is an intelligent workspace that brings ideas, tasks, goals, and planning into one seamless experience. 
-It is designed to help users move from inspiration to execution without the friction of switching between multiple tools.
+This contains everything you need to run your app locally.
 
-Built for founders, creators, students, and high-performing teams, SmartFlow transforms scattered thoughts into structured action. 
-Whether you are building a startup, managing projects, or organizing personal goals, SmartFlow provides a focused environment 
-to think clearly and work with purpose.
+View your app in AI Studio: https://ai.studio/apps/025c9975-3855-482a-a64d-551a357b9cb7
 
-The platform combines the essential elements of productivity into a single elegant system. 
-Notes, priorities, deadlines, and long-term objectives stay connected, giving users a complete view of what matters and what needs to be done next.
+## Run Locally
 
-SmartFlow is built on a simple belief: extraordinary results come from clarity and consistent execution.
-By turning ideas into organized workflows, SmartFlow helps ambitious people build faster, stay aligned, and make meaningful progress every day.
+**Prerequisites:**  Node.js
 
-**Think clearly. Build consistently. Move faster.**
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

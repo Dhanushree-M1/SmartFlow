@@ -1,0 +1,9 @@
+{
+  "name": "SmartFlow",
+  "description": "A high-performance cinematic productivity system with AI-driven insights, deep focus protocols, and project velocity tracking.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
